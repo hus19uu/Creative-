@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>العد التنازلي: الورقة الأخيرة</title>
+    <!-- تحميل Tailwind CSS للتصميم -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- استخدام خط مناسب للغة العربية -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        /* لضمان عرض الأرقام بشكل ثابت ومنعها من "القفز" عند التغير */
+        .timer-font {
+            font-family: 'monospace', 'Courier New', Courier;
+        }
+        
+        /* تأثير التظليل على الحواف لتركيز النظر */
+        .vignette-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, transparent 50%, black 120%);
+            pointer-events: none; /* للسماح بالتفاعل مع ما خلفه */
+        }
+
+        /* تأثير النبض الهادئ للثواني */
+        .heartbeat {
+            animation: beat 1s infinite ease-out;
+        }
+        @keyframes beat {
+            0%, 100% {
+                transform: scale(1);
+                text-shadow: 0 0 8px rgba(217, 119, 6, 0.5);
+            }
+            50% {
+                transform: scale(1.05);
+                text-shadow: 0 0 16px rgba(217, 119, 6, 0.8);
+            }
+        }
+    </style>
+</head>
+<body class="bg-black flex items-center justify-center h-screen p-4">
+
+    <!-- الحاوية الرئيسية مع تأثير التظليل -->
+    <div class="relative max-w-lg w-full rounded-lg overflow-hidden shadow-2xl border-2 border-gray-800 vignette-overlay">
+        <!-- الصورة التي أرفقتها -->
+        <img 
+            id="userImage" 
+            src="https://i.ibb.co/tZ5tY5H/image.png" 
+            alt="ألم يرموا أوراقهم الرابحة بعد؟" 
+            class="w-full h-auto object-cover block"
+            onerror="this.onerror=null; this.src='https://placehold.co/600x400/1e293b/94a3b8?text=Error+Loading+Image'; this.alt='فشل تحميل الصورة';"
+        >
+
+        <!-- حاوية العداد التنازلي بتصميم جديد -->
+        <div id="countdown-container" class="absolute inset-0 flex flex-col justify-end p-6 bg-gradient-to-t from-black via-black/80 to-transparent">
+            <div class="text-center w-full">
+                <h2 id="main-title" class="text-amber-100/90 text-xl md:text-2xl font-black mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.8);">الورقة الأخيرة على وشك أن تُكشف...</h2>
+                <div id="timer" class="flex justify-center items-end space-x-2 md:space-x-4">
+                    <!-- الأيام -->
+                    <div class="text-center">
+                        <div id="days" class="timer-font text-3xl md:text-5xl font-bold text-slate-300">00</div>
+                        <div class="text-xs md:text-sm text-slate-500">أيام</div>
+                    </div>
+                    <div class="timer-font text-2xl md:text-4xl font-bold pb-1 text-slate-700">:</div>
+                    <!-- الساعات -->
+                    <div class="text-center">
+                        <div id="hours" class="timer-font text-3xl md:text-5xl font-bold text-slate-300">00</div>
+                        <div class="text-xs md:text-sm text-slate-500">ساعات</div>
+                    </div>
+                     <div class="timer-font text-2xl md:text-4xl font-bold pb-1 text-slate-700">:</div>
+                    <!-- الدقائق -->
+                    <div class="text-center">
+                        <div id="minutes" class="timer-font text-3xl md:text-5xl font-bold text-slate-300">00</div>
+                        <div class="text-xs md:text-sm text-slate-500">دقائق</div>
+                    </div>
+                     <div class="timer-font text-2xl md:text-4xl font-bold pb-1 text-slate-700">:</div>
+                    <!-- الثواني -->
+                    <div class="text-center">
+                        <div id="seconds" class="timer-font text-3xl md:text-5xl font-bold text-amber-600 heartbeat">00</div>
+                        <div class="text-xs md:text-sm text-slate-500">ثواني</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- إعدادات العداد التنازلي ---
+        // التاريخ المستهدف: 1 محرم 1447 هـ (الموافق 28 يونيو 2025 ميلادي)
+        const countdownDate = new Date("2025-06-28T00:00:00").getTime();
+
+        // الحصول على عناصر العرض من الصفحة
+        const elements = {
+            days: document.getElementById('days'),
+            hours: document.getElementById('hours'),
+            minutes: document.getElementById('minutes'),
+            seconds: document.getElementById('seconds'),
+            timer: document.getElementById('timer'),
+            title: document.getElementById('main-title'),
+        };
+
+        // دالة التحديث التي تعمل كل ثانية
+        const interval = setInterval(() => {
+            const now = new Date().getTime();
+            const distance = countdownDate - now;
+
+            // عند انتهاء الوقت المحدد
+            if (distance < 0) {
+                clearInterval(interval); // إيقاف العداد
+                elements.title.style.display = 'none'; // إخفاء العنوان الأصلي
+                elements.timer.innerHTML = '<div class="text-xl md:text-2xl font-bold text-amber-200 w-full text-center p-2" style="text-shadow: 2px 2px 6px #000;">كُشفت الورقة: عامٌ جديد... وفصلٌ جديد.</div>';
+                return;
+            }
+
+            // حسابات الوقت المتبقي
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            // عرض النتيجة في الصفحة
+            elements.days.innerText = String(days).padStart(2, '0');
+            elements.hours.innerText = String(hours).padStart(2, '0');
+            elements.minutes.innerText = String(minutes).padStart(2, '0');
+            elements.seconds.innerText = String(seconds).padStart(2, '0');
+
+        }, 1000);
+    </script>
+
+</body>
+</html>
