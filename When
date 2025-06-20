@@ -3,128 +3,171 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>العد التنازلي: ١ محرم ١٤٤٧</title>
-    <!-- تحميل Tailwind CSS للتصميم -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>العد التنازلي النهائي</title>
+    <!-- تم جلب الخط من جوجل، وإذا فشل تحميله لن يؤثر على عمل الصفحة -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- استخدام خط القاهرة، وهو خط عربي أنيق وواضح -->
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700;900&display=swap" rel="stylesheet">
+
     <style>
+        /* كل التصميم هنا، لا ملفات خارجية على الإطلاق */
         body {
+            margin: 0;
             font-family: 'Cairo', sans-serif;
             background-color: #000;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
-        /* خط خاص بالأرقام لضمان ثباتها أثناء التغير */
-        .timer-font {
-            font-family: 'monospace', 'Courier New', Courier;
+
+        #container {
+            /* الصورة كخلفية، الطريقة الأكثر ضماناً لظهورها */
+            background-image: url('https://i.ibb.co/tZ5tY5H/image.png');
+            background-size: cover;
+            background-position: center;
+            width: 100%;
+            max-width: 500px;
+            aspect-ratio: 4 / 3; /* للحفاظ على أبعاد الصورة */
+            border-radius: 0.5rem;
+            border: 2px solid #333;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            overflow: hidden;
         }
         
-        /* تأثير النبض الهادئ للثواني */
-        .heartbeat {
-            animation: beat 1s infinite ease-out;
+        /* طبقة تظليل سفلية بسيطة جداً لتحسين قراءة النص */
+        #container::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 75%;
+            background: linear-gradient(to top, rgba(0,0,0,0.95), rgba(0,0,0,0.7), transparent);
         }
-        @keyframes beat {
-            0%, 100% {
-                transform: scale(1);
-                text-shadow: 0 0 7px rgba(217, 119, 6, 0.4);
-            }
-            50% {
-                transform: scale(1.05);
-                text-shadow: 0 0 14px rgba(217, 119, 6, 0.7);
-            }
+
+        #content-wrapper {
+            padding: 1.5rem;
+            text-align: center;
+            z-index: 2; /* للتأكد من أن المحتوى فوق طبقة التظليل */
+        }
+        
+        #main-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 1rem;
+            text-shadow: 1px 1px 3px #000;
+        }
+
+        #timer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .time-block {
+            text-align: center;
+        }
+
+        .time-value {
+            font-family: 'monospace', 'Courier New';
+            font-size: 2.5rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #eee;
+        }
+        
+        /* لون مميز للثواني */
+        #seconds {
+            color: #d97706; /* Amber 600 */
+        }
+
+        .time-label {
+            font-size: 0.75rem;
+            color: #999;
+        }
+        
+        #reveal-message {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #fcd34d; /* Amber 300 */
+            text-shadow: 1px 1px 5px #ca8a04;
         }
     </style>
 </head>
-<body class="flex items-center justify-center h-screen p-4">
+<body>
 
-    <!-- الحاوية الرئيسية -->
-    <div class="relative max-w-lg w-full rounded-lg overflow-hidden shadow-2xl border-2 border-gray-900">
-        <!-- الصورة الآن مدمجة مباشرة في الكود باستخدام Base64 - حل نهائي ومضمون -->
-        <img 
-            id="userImage" 
-            src="data:image/jpeg;base64,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CEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhACj4/KdB8flAfQoQhACleYZviE7leYZviHwgMjPj8p0Xx+UyL4/KdF8flAfQoQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhACj4/KdB8flAfQoQhACleYZviE7leYZviHwgMjPj8p0Xx+UyL4/KdF8flAfQoQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhACj4/KdB8flAfQoQhACleYZviE7leYZviHwgMjPj8p0Xx+UyL4/KdF8flAfQoQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhACj4/KdB8flAfQoQhACleYZviE7leYZviHwgMjPj8p0Xx+UyL4/KdF8flAfQoQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhACj4/KdB8flAfQoQhACleYZviE7leYZviHwgMjPj8p0Xx+UyL4/KdF8flAfQoQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhACj4/KdB8flAfQoQhACleYZviE7leYZviHwgMjPj8p0Xx+UyL4/KdF8flAfQoQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhACj4/KdB8flAfQoQhAClPjLgMybJ8DxoG4aTQnZAfAoQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEAKUIQApQhAClCEA//Z"
-            alt="ألم يرموا أوراقهم الرابحة بعد؟" 
-            class="w-full h-auto object-cover block"
-        >
-
-        <!-- الغطاء الشفاف للنص، يغطي الجزء السفلي فقط -->
-        <div class="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
-
-        <!-- حاوية العداد التنازلي -->
-        <div id="countdown-container" class="absolute inset-0 flex flex-col justify-end p-6">
-            <!-- العداد -->
-            <div id="timer-wrapper" class="text-center w-full">
-                 <h2 id="main-title" class="text-amber-100/80 text-lg md:text-xl font-bold mb-4" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.9);">الورقة الأخيرة على وشك أن تُكشف...</h2>
-                <div id="timer" class="flex justify-center items-end space-x-2 md:space-x-3">
-                    <div class="text-center"><div id="days" class="timer-font text-3xl md:text-5xl font-bold text-slate-200">00</div><div class="text-xs text-slate-400">أيام</div></div>
-                    <div class="text-2xl md:text-4xl font-bold pb-1 text-slate-600">:</div>
-                    <div class="text-center"><div id="hours" class="timer-font text-3xl md:text-5xl font-bold text-slate-200">00</div><div class="text-xs text-slate-400">ساعات</div></div>
-                    <div class="text-2xl md:text-4xl font-bold pb-1 text-slate-600">:</div>
-                    <div class="text-center"><div id="minutes" class="timer-font text-3xl md:text-5xl font-bold text-slate-200">00</div><div class="text-xs text-slate-400">دقائق</div></div>
-                    <div class="text-2xl md:text-4xl font-bold pb-1 text-slate-600">:</div>
-                    <div class="text-center"><div id="seconds" class="timer-font text-3xl md:text-5xl font-bold text-amber-600 heartbeat">00</div><div class="text-xs text-slate-400">ثواني</div></div>
-                </div>
-            </div>
-
-            <!-- حاوية الكشف النهائي (مخفية) -->
-            <div id="reveal-container" class="hidden text-center w-full">
-                <div class="text-xl md:text-2xl font-black text-amber-200 p-4" style="text-shadow: 1px 1px 10px #ca8a04;">
-                    كُشِفت الورقة: عامٌ جديد... وفصلٌ جديد.
-                </div>
-            </div>
+    <div id="container">
+        <div id="content-wrapper">
+            <!-- سيتم ملء هذا القسم بواسطة جافاسكريبت -->
         </div>
     </div>
 
     <script>
-        // --- إعدادات العداد التنازلي ---
-        // التاريخ المستهدف: 1 محرم 1447 هـ (الموافق 28 يونيو 2025 ميلادي)
-        const countdownDate = new Date("2025-06-28T00:00:00").getTime();
+        // لن يتم تنفيذ أي كود إلا بعد تحميل الصفحة بالكامل لضمان عدم حدوث أخطاء
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            // --- الإعدادات ---
+            const countdownDate = new Date("2025-06-28T00:00:00").getTime();
+            const contentWrapper = document.getElementById('content-wrapper');
 
-        // الحصول على عناصر العرض من الصفحة
-        const elements = {
-            days: document.getElementById('days'),
-            hours: document.getElementById('hours'),
-            minutes: document.getElementById('minutes'),
-            seconds: document.getElementById('seconds'),
-            timerWrapper: document.getElementById('timer-wrapper'),
-            revealContainer: document.getElementById('reveal-container'),
-            title: document.getElementById('main-title'),
-        };
+            // --- دالة التحديث ---
+            function updateClock() {
+                const now = new Date().getTime();
+                const distance = countdownDate - now;
 
-        function updateClock() {
-            const now = new Date().getTime();
-            const distance = countdownDate - now;
+                // --- الحالة 1: العداد يعمل ---
+                if (distance > 0) {
+                    const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-            // إذا انتهى الوقت
-            if (distance < 0) {
-                clearInterval(interval);
-                // إخفاء العداد والعنوان
-                elements.timerWrapper.style.display = 'none';
-                elements.title.style.display = 'none';
-                // إظهار رسالة الكشف النهائية
-                elements.revealContainer.classList.remove('hidden');
-                return;
+                    contentWrapper.innerHTML = `
+                        <h2 id="main-title">الورقة الأخيرة على وشك أن تُكشف...</h2>
+                        <div id="timer">
+                            <div class="time-block">
+                                <div class="time-value">${String(days).padStart(2, '0')}</div>
+                                <div class="time-label">أيام</div>
+                            </div>
+                            <div class="time-block">
+                                <div class="time-value">${String(hours).padStart(2, '0')}</div>
+                                <div class="time-label">ساعات</div>
+                            </div>
+                            <div class="time-block">
+                                <div class="time-value">${String(minutes).padStart(2, '0')}</div>
+                                <div class="time-label">دقائق</div>
+                            </div>
+                            <div class="time-block">
+                                <div id="seconds" class="time-value">${String(seconds).padStart(2, '0')}</div>
+                                <div class="time-label">ثواني</div>
+                            </div>
+                        </div>
+                    `;
+                } 
+                // --- الحالة 2: انتهى الوقت ---
+                else {
+                    clearInterval(interval); // إيقاف التحديث
+                    contentWrapper.innerHTML = `
+                        <div id="reveal-message">
+                            كُشِفت الورقة: عامٌ جديد... وفصلٌ جديد.
+                        </div>
+                    `;
+                }
             }
 
-            // حساب الوقت المتبقي
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-            // عرض النتيجة في الصفحة
-            elements.days.innerText = String(days).padStart(2, '0');
-            elements.hours.innerText = String(hours).padStart(2, '0');
-            elements.minutes.innerText = String(minutes).padStart(2, '0');
-            elements.seconds.innerText = String(seconds).padStart(2, '0');
-        }
-
-        // تشغيل الساعة كل ثانية
-        const interval = setInterval(updateClock, 1000);
-        
-        // تحديث الساعة فوراً عند تحميل الصفحة لمنع ظهور أرقام خاطئة للحظة
-        updateClock();
+            // تشغيل التحديث كل ثانية
+            const interval = setInterval(updateClock, 1000);
+            
+            // تحديث فوري عند التحميل لتجنب أي تأخير
+            updateClock();
+        });
     </script>
 
 </body>
